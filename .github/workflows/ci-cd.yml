@@ -30,6 +30,7 @@ jobs:
           echo "$SSH_KEY" > ssh_key
           ls
           chmod 400 ssh_key
+          ssh-keyscan -H ${{secrets.SERVER_IP}} >> ~/.ssh/known_hosts
           scp -i ssh_key StrictHostKeyChecking=no -r ./dist/* ${{secrets.USER}}@${{secrets.SERVER_IP}}:/var/www/react-app/
 
       - name: Restart Nginx Service
