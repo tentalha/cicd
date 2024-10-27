@@ -1,0 +1,42 @@
+name: CI/CD for react-app
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install Dependecnies
+        run: npm install
+
+      - name: Making build
+        run: npm run build
+
+      - name: Copy build to server
+        env:
+          SSH_KEY: ${{secrets.SSH_KEY}}
+        run: |
+          pwd
+          echo "$SSH_KEY" > ssh_key
+          ls
+          chmod 400 ssh_key
+          scp -i ssh_key StrictHostKeyChecking=no -r ./dist/* ${{secrets.USER}}@${{secrets.SERVER_IP}}:/var/www/react-app/
+
+      - name: Restart Nginx Service
+        run: |
+          ssh -i ssh_key -o StrictHostKeyChecking=no ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
+          sudo systemctl restart nginx
+          EOF
+
+      - name: Removing ssh key
+        run: rm -rf ssh_key
