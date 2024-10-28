@@ -30,11 +30,11 @@ jobs:
 
       - name: Copy build to server
         run: |
-          scp -i /home/runner/.ssh/id_rsa StrictHostKeyChecking=no -r ./dist/* ${{secrets.USER}}@${{secrets.SERVER_IP}}:/var/www/react-app/
+          scp StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa -r ./dist/* ${{secrets.USER}}@${{secrets.SERVER_IP}}:/var/www/react-app/
 
       - name: Restart Nginx Service
         run: |
-          ssh -i home/runner/.ssh/id_rsa -o StrictHostKeyChecking=no ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
+          ssh StrictHostKeyChecking=no -i /home/runner/.ssh/id_rsa -o ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
           sudo systemctl restart nginx
           EOF
 
