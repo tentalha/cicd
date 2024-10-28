@@ -28,12 +28,13 @@ jobs:
         run: |
           echo "$SSH_KEY" > ssh_key
           chmod 600 ssh_key
+          touch ~/.ssh/known_hosts
           ssh-keyscan -H ec2-13-48-84-43.eu-north-1.compute.amazonaws.com >> ~/.ssh/known_hosts
-          scp -i ssh_key -o StrictHostKeyChecking=no -r ./build user@your-server.com:/path/on/server
+          scp -i ssh_key -o StrictHostKeyChecking=no -r ./dist/* ${{secrets.USER}}@${{secrets.SERVER_IP}}:/var/www/react-app/
 
       - name: Restart Nginx Service
         run: |
-          ssh -i /home/runner/.ssh/id_rsa -o UserKnownHostsFile=/home/runner/.ssh/known_hosts ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ssh_key ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
           sudo systemctl restart nginx
           EOF
 
