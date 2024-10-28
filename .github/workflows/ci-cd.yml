@@ -36,7 +36,7 @@ jobs:
       - name: Copying build to get served by Nginx
         run: |
           ssh -o StrictHostKeyChecking=no -i ssh_key ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
-          sudo cp -r dist/ /var/www/react-app/ 
+          sudo cp -r dist/* /var/www/react-app/ 
           sudo systemctl restart nginx
           EOF
 
