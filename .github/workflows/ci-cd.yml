@@ -22,6 +22,12 @@ jobs:
       - name: Making build
         run: npm run build
 
+      - name: Setup SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }} # My SSH  key
+          known_hosts: ${{ secrets.SERVER_IP }} # The hostname of my server
+
       - name: Copy build to server
         env:
           SSH_KEY: ${{secrets.SSH_KEY}}
@@ -30,7 +36,6 @@ jobs:
           echo "$SSH_KEY" > ssh_key
           ls
           chmod 400 ssh_key
-          ssh-keyscan -H ${{secrets.SERVER_IP}} >> ~/.ssh/known_hosts
           scp -i ssh_key StrictHostKeyChecking=no -r ./dist/* ${{secrets.USER}}@${{secrets.SERVER_IP}}:/var/www/react-app/
 
       - name: Restart Nginx Service
