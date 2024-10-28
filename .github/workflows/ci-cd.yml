@@ -25,18 +25,18 @@ jobs:
       - name: Setup SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
-          key: ${{ secrets.SSH_KEY }} # My SSH private key
-          known_hosts: ${{ secrets.SERVER_IP }} # My hostname of your server
-          
+          key: ${{ secrets.SSH_KEY }} # Your SSH private key
+          known_hosts: ${{ secrets.KNOWN_HOST }} # The hostname of your server
+
       - name: Copy build to server
         run: |
           scp -i /home/runner/.ssh/id_rsa StrictHostKeyChecking=no -r ./dist/* ${{secrets.USER}}@${{secrets.SERVER_IP}}:/var/www/react-app/
 
       - name: Restart Nginx Service
         run: |
-          ssh -i /home/runner/.ssh/id_rsa -o StrictHostKeyChecking=no ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
+          ssh -i home/runner/.ssh/id_rsa -o StrictHostKeyChecking=no ${{secrets.USER}}@${{secrets.SERVER_IP}} << 'EOF'
           sudo systemctl restart nginx
           EOF
 
       - name: Removing ssh key
-        run: rm -rf /home/runner/.ssh/*
+        run: rm -rf home/runner/.ssh/*
